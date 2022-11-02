@@ -4,6 +4,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./src/HomePage";
+import LandingPage from "./src/LandingPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +14,7 @@ const Scanner = () => {
   const [scanned, setScanned] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener("focus", () => {
       setScanned(false);
       setHasPermission(false);
       (async () => {
@@ -42,6 +43,7 @@ const Scanner = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={{ fontSize: 50 }}>SDSdsdsd</Text>
       <BarCodeScanner
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
@@ -53,9 +55,28 @@ const Scanner = () => {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ScannerView">
-        <Stack.Screen name="HomePage" component={HomePage} />
-        <Stack.Screen name="ScannerView" component={Scanner} />
+      <Stack.Navigator initialRouteName="LandingPage">
+        <Stack.Screen
+          name="HomePage"
+          component={HomePage}
+          options={{
+            title: "Select Current Location",
+          }}
+        />
+        <Stack.Screen
+          name="ScannerView"
+          component={Scanner}
+          options={{
+            title: "Make The QR Visible ",
+          }}
+        />
+        <Stack.Screen
+          name="LandingPage"
+          component={LandingPage}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

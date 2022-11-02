@@ -22,7 +22,7 @@ const HomePage = ({ route }) => {
 
   const [items, setItems] = useState([
     { label: "Kalutara", value: "Kalutara" },
-    { label: "Colmbo", value: "Colmbo" },
+    { label: "Colmbo", value: "Colombo" },
   ]);
 
   const navigation = useNavigation();
@@ -34,18 +34,61 @@ const HomePage = ({ route }) => {
   const obj = {
     userID: "123456789",
     busNumber: "BUS - 0002",
-    busLocation: "Colombo",
+    busLocation: value,
   };
 
   useEffect(() => {
     return sound
       ? () => {
-        console.log("Unloading Sound");
-        sound.unloadAsync();
-      }
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
       : undefined;
   }, [sound]);
+  async function playBalanceSound(path) {
+    var req = path;
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../assets/Balance.mp3")
+    );
+    setSound(sound);
 
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+  async function playCreatedSound(path) {
+    var req = path;
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../assets/Onboard.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+  async function playEndingSound(path) {
+    var req = path;
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../assets/Ending.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+  async function playErrorSound(path) {
+    var req = path;
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../assets/Error.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
   const createJourney = async () => {
     setLoading(true);
 
@@ -55,19 +98,15 @@ const HomePage = ({ route }) => {
         setLoading(false);
         console.log("this is if success", res.data);
         if (res.data.resCode == 202) {
-          async function playSound() {
-            console.log("Loading Sound");
-            const { sound } = await Audio.Sound.createAsync(
-              require("../assets/Balance.mp3")
-            );
-            setSound(sound);
-
-            console.log("Playing Sound");
-            await sound.playAsync();
-          }
-          playSound();
+          playCreatedSound();
+        } else if (res.data.resCode == 201) {
+          playEndingSound();
+        } else if (res.data.resCode == 402) {
+          playBalanceSound();
+        } else {
+          playErrorSound();
         }
-        return Alert.alert("Sucess", res.data.message, [
+        return Alert.alert("Ticket Scanner", res.data.message, [
           { text: "OK", onPress: () => console.log("OK Pressed") },
         ]);
       })
@@ -79,15 +118,28 @@ const HomePage = ({ route }) => {
   };
 
   return (
-    <View>
+    <View
+      style={{
+        marginTop: 100,
+      }}
+    >
       {loading ? (
         <ActivityIndicator />
       ) : (
         <>
-          <Button
-            title="Go to scanner page"
-            onPress={navigateToScanner}
-          ></Button>
+          <View
+            style={{
+              width: 180,
+              height: 80,
+              marginLeft: 100,
+            }}
+          >
+            <Button
+              title="Go to scanner page"
+              onPress={navigateToScanner}
+            ></Button>
+          </View>
+
           <DropDownPicker
             open={open}
             value={value}
@@ -97,7 +149,9 @@ const HomePage = ({ route }) => {
             setItems={setItems}
             placeholder="Select a Location"
           />
-          <View style={{ marginTop: 50 }}>
+          <View
+            style={{ marginTop: 50, width: 140, height: 120, marginLeft: 120 }}
+          >
             <Button title="Create Journey" onPress={createJourney}></Button>
           </View>
         </>
