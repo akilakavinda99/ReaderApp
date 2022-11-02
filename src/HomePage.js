@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -14,31 +14,35 @@ import { Audio } from "expo-av";
 const HomePage = ({ route }) => {
   const { userData } = route.params;
   console.log(userData);
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [sound, setSound] = React.useState();
-
+  const [sound, setSound] = useState();
   const [value, setValue] = useState(null);
+
   const [items, setItems] = useState([
     { label: "Kalutara", value: "Kalutara" },
     { label: "Colmbo", value: "Colmbo" },
   ]);
+
   const navigation = useNavigation();
+
   const navigateToScanner = () => {
     navigation.navigate("ScannerView");
   };
+
   const obj = {
     userID: "123456789",
     busNumber: "BUS - 0002",
     busLocation: "Colombo",
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     return sound
       ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
+        console.log("Unloading Sound");
+        sound.unloadAsync();
+      }
       : undefined;
   }, [sound]);
 
