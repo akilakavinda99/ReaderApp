@@ -1,14 +1,22 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View, StyleSheet, Button, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Button,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios";
+import { Audio } from "expo-av";
 
 const HomePage = ({ route }) => {
   const { userData } = route.params;
   console.log(userData);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sound, setSound] = React.useState();
 
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -25,6 +33,15 @@ const HomePage = ({ route }) => {
     busLocation: "Colombo",
   };
 
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
   const createJourney = async () => {
     setLoading(true);
 
@@ -33,6 +50,22 @@ const HomePage = ({ route }) => {
       .then((res) => {
         setLoading(false);
         console.log("this is if success", res.data);
+        if (res.data.resCode == 202) {
+          async function playSound() {
+            console.log("Loading Sound");
+            const { sound } = await Audio.Sound.createAsync(
+              require("../assets/Balance.mp3")
+            );
+            setSound(sound);
+
+            console.log("Playing Sound");
+            await sound.playAsync();
+          }
+          playSound();
+        }
+        return Alert.alert("Sucess", res.data.message, [
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ]);
       })
       .catch((err) => {
         setLoading(false);
