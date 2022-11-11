@@ -22,7 +22,7 @@ const HomePage = ({ route }) => {
 
   const [items, setItems] = useState([
     { label: "Kalutara", value: "Kalutara" },
-    { label: "Colmbo", value: "Colombo" },
+    { label: "Colombo", value: "Colombo" },
   ]);
 
   const navigation = useNavigation();
@@ -32,7 +32,7 @@ const HomePage = ({ route }) => {
   };
 
   const obj = {
-    userID: "123456789",
+    userID: userData,
     busNumber: "BUS - 0002",
     busLocation: value,
   };
@@ -40,9 +40,9 @@ const HomePage = ({ route }) => {
   useEffect(() => {
     return sound
       ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
-        }
+        console.log("Unloading Sound");
+        sound.unloadAsync();
+      }
       : undefined;
   }, [sound]);
   async function playBalanceSound(path) {
@@ -112,7 +112,9 @@ const HomePage = ({ route }) => {
       })
       .catch((err) => {
         setLoading(false);
-
+        if (err.response.data.resCode == 402) {
+          playBalanceSound();
+        }
         console.log(err.response.data);
       });
   };

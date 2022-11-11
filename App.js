@@ -29,7 +29,7 @@ const Scanner = () => {
   // execute when scanned
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    alert('Scanned Successfully');
     navigation.navigate("HomePage", { userData: data });
   };
 
